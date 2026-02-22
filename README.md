@@ -7,7 +7,7 @@ A RESTful Spring Boot application that tracks courier geolocations, calculates t
 - **Real-time Tracking**: Logs courier locations via REST API.
 - **Distance Calculation**: Calculates total travel distance using configurable strategies (**Haversine**, **Equirectangular**).
 - **Store Entry Detection**: Automatically logs when a courier enters a store's perimeter (100m).
-- **Initial Store Data**: Stores are automatically loaded into the in-memory/PostgreSQL database via `StoreDataLoader` on application startup using `stores.json`.
+- **Initial Store Data**: Stores are automatically loaded into the PostgreSQL database via `StoreDataLoader` on application startup using `stores.json`.
 - **Debouncing**: Prevents duplicate store entry logs within 1 minute.
 - **Concurrency Control**:
     - **Pessimistic Locking**: Uses `Pessimistic Lock (WRITE)` on the `Courier` entity to serialize location updates and ensure data consistency without race conditions.
@@ -128,9 +128,10 @@ The test suite spans across unit and integration tests, explicitly testing edge-
 - **Idempotency** (Skipping duplicate events from RabbitMQ)
 - **Store Proximity Debounce Logic**
 
-## API Documentation
+## API Documentation & Interfaces
 
-The application provides interactive API documentation via Swagger UI.
+The application provides interactive API documentation via Swagger UI, and RabbitMQ provides a management interface.
 
 - **Swagger UI**: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
 - **OpenAPI JSON**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+- **RabbitMQ Management UI**: [http://localhost:15672](http://localhost:15672) *(Credentials: `guest` / `guest`)*
