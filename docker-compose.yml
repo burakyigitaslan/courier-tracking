@@ -29,21 +29,10 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d courierdb"]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d courierdb" ]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: courier-tracking-pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@migros.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -55,7 +44,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
       interval: 10s
       timeout: 5s
       retries: 5

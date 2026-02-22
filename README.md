@@ -7,6 +7,7 @@ A RESTful Spring Boot application that tracks courier geolocations, calculates t
 - **Real-time Tracking**: Logs courier locations via REST API.
 - **Distance Calculation**: Calculates total travel distance using configurable strategies (**Haversine**, **Equirectangular**).
 - **Store Entry Detection**: Automatically logs when a courier enters a store's perimeter (100m).
+- **Initial Store Data**: Stores are automatically loaded into the in-memory/PostgreSQL database via `StoreDataLoader` on application startup using `stores.json`.
 - **Debouncing**: Prevents duplicate store entry logs within 1 minute.
 - **Concurrency Control**:
     - **Pessimistic Locking**: Uses `Pessimistic Lock (WRITE)` on the `Courier` entity to serialize location updates and ensure data consistency without race conditions.
@@ -17,36 +18,38 @@ A RESTful Spring Boot application that tracks courier geolocations, calculates t
 ## Tech Stack
 
 - **Java 21**, **Spring Boot 3.4.1**
-- **PostgreSQL** (Production Database)
+- **PostgreSQL**
 - **H2** (Test Database)
-- **RabbitMQ** (Message Broker)
+- **RabbitMQ**
 - **Spring Data JPA**
 - **MapStruct**
 - **Lombok**
-- **Docker Compose**
+- **Docker**
 
 ## Project Structure
 
-```
+```text
 src/main/java/com/casestudy/couriertracking/
+├── CourierTrackingApplication.java
 ├── api/
 │   ├── controller/      CourierController, CourierTrackingController
-│   └── exception/       GlobalExceptionHandler
+│   └── exception/       CourierNotFoundException, GlobalExceptionHandler
 ├── application/
 │   ├── dto/
 │   │   ├── request/     CourierRequestDTO, LocationRequestDTO
-│   │   └── response/    CourierResponseDTO, CourierLocationResponseDTO
-│   ├── mapper/          CourierMapper, CourierLocationMapper
+│   │   └── response/    CourierLocationResponseDTO, CourierResponseDTO
+│   ├── mapper/          CourierLocationMapper, CourierMapper
 │   └── service/         CourierService, CourierTrackingService
+│       └── implementation/ CourierServiceImpl, CourierTrackingServiceImpl
 ├── domain/
-│   ├── event/           LocationCreatedEvent
 │   ├── model/           Courier, CourierLocation, Store, StoreEntryLog
-│   ├── repository/      CourierRepository, CourierLocationRepository
-│   └── strategy/        DistanceCalculationStrategy
+│   ├── repository/      CourierLocationRepository, CourierRepository, StoreEntryLogRepository
+│   └── strategy/        DistanceCalculationStrategy, DistanceStrategyFactory, EquirectangularDistanceStrategy, HaversineDistanceStrategy
+│       └── enumeration/ DistanceStrategyType
 └── infrastructure/
-    ├── config/          RabbitMQConfig, StoreDataLoader
+    ├── config/          CourierTrackingProperties, RabbitMQConfig, StoreDataLoader
     ├── listener/        StoreProximityListener
-    └── messaging/       RabbitMQLocationEventPublisher
+    └── messaging/       LocationEventPublisher, LocationMessage, LocationMessageConsumer, RabbitMQLocationEventPublisherImpl
 ```
 
 ## Configuration
